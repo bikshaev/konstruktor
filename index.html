@@ -151,7 +151,8 @@ input[type=range]{height:22px;margin:2px 0}
 <button data-t="ph">Фото</button>
 </nav>
 
-<div id="ov" hidden><img alt=""><div>Удерживайте картинку и выберите «Сохранить в Фото»</div><a id="dl" download="post.png">или скачать файлом</a><button class="chip" id="cl">Закрыть</button></div>
+<div id="ov" hidden><img alt=""><button class="save" id="shr">Сохранить в Фото</button><div class="hint" style="color:#fff">или удержите картинку пальцем</div><a id="dl" download="post.png">скачать файлом</a><button class="chip" id="cl">Закрыть</button></div>
+<a id="dl" download="post.png">или скачать файлом</a><button class="chip" id="cl">Закрыть</button></div>
 
 <script>
 const $=s=>document.querySelector(s),cv=$('#cv'),cx=cv.getContext('2d'),W=1080,HS={story:1920,post:1350};
@@ -278,15 +279,14 @@ cv.onpointerup=cv.onpointercancel=e=>{P.delete(e.pointerId);if(P.size<2)pin=null
 $('#cl').onclick=()=>$('#ov').hidden=true;
 /* Сохранение: без входа и без сети. Показываем картинку (её можно удержать и сохранить в «Фото») и ссылку на файл. */
 let lastURL=null;
-$('#exp').onclick=()=>{
-draw(true);
-cv.toBlob(blob=>{
-draw();
-if(lastURL)URL.revokeObjectURL(lastURL);
-lastURL=URL.createObjectURL(blob);
+let lastFile=null;
+function showOv(url,name){$('#ov img').src=url;$('#dl').href=url;$('#dl').download=name;$('#ov').hidden=false}
+$('#exp').onclick=()=>{draw(true);cv.toBlob(async blob=>{draw();
 const name=(S.fmt==='story'?'story':'post')+'-'+new Date().toISOString().slice(0,10)+'.png';
-$('#ov img').src=lastURL;$('#dl').href=lastURL;$('#dl').download=name;
-$('#ov').hidden=false},'image/png')};
+lastFile=new File([blob],name,{type:'image/png'});
+if(navigator.canShare&&navigator.canShare({files:[lastFile]})){try{await navigator.share({files:[lastFile]});return}catch(err){if(err&&err.name==='AbortError')return}}
+if(lastURL)URL.revokeObjectURL(lastURL);lastURL=URL.createObjectURL(blob);showOv(lastURL,name)},'image/png')};
+$('#shr').onclick=async()=>{if(!lastFile)return;try{await navigator.share({files:[lastFile]})}catch(err){}};
 load(0);
 </script>
 <script>
