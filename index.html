@@ -69,6 +69,17 @@ header h1{font-size:17px}
 .ic{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;font-size:14px;font-weight:600;line-height:1;border:1.5px solid var(--ac);color:var(--ac);background:var(--card);border-radius:10px}
 .ic:not(:disabled):active{background:var(--ac);color:var(--bg)}
 .ic:disabled{opacity:.35;border-style:dashed}
+
+/* узкий экран телефона: всё в одну строку */
+header{gap:6px;padding:8px 10px 6px;flex-wrap:nowrap}
+@media (max-width:520px){
+header h1{display:none}
+.ic{padding:6px 9px;font-size:13px;gap:4px}
+.ic svg{width:16px;height:16px}
+.seg{margin-left:auto}
+.seg button{padding:6px 9px;font-size:13px}
+.save{padding:8px 12px;font-size:14px;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -265,7 +276,11 @@ $('#ov').hidden=false},'image/png')};
 load(0);
 </script>
 <script>
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){
+let reloaded=false;
+navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!reloaded){reloaded=true;location.reload()}});
+navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
+}
 </script>
 </body>
 </html>
