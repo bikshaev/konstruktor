@@ -196,7 +196,8 @@ const row=(n,a,d,y)=>[T(n,80,y,30,'m',{r:'a',sp:4}),T(a,80,y+62,56,'c'),T(d,80,y
 const TP=[
 {n:'Обложка',b:()=>[T('СЕСТРА ЛУНА · СОВРЕМЕННИК',80,290,24,'m',{r:'a',sp:5,w:800}),T('Йога-нидра',80,880,160,'c'),T('и поющие чаши',80,1050,106,'i',{r:'a'}),T('Вечер, после которого вы выспитесь',80,1210,36,'m',{w:760}),T('6 ноября · 16:15',80,1480,32,'m')]},
 {n:'Программа',b:()=>[T('В ПРОГРАММЕ',80,290,24,'m',{r:'a',sp:5}),T('Три шага к глубокому отдыху',80,400,100,'c'),...row('01','Пранаяма','Мягкие дыхательные техники',800),...row('02','Йога-нидра','Глубокое расслабление под пледом',1000),...row('03','Поющие чаши','Звуковая терапия',1200)]},
-{n:'Детали',b:()=>[T('ДЕТАЛИ',80,290,24,'m',{r:'a',sp:5}),T('Когда и где',80,400,120,'c'),T('6 ноября, пятница',80,700,84,'c'),T('16:15',80,830,84,'c'),T('Студия «Сестра Луна»',80,960,72,'c'),T('Современник',80,1070,30,'m'),T('1 000 ₽',80,1200,84,'c',{r:'a'}),T('Количество мест ограничено',80,1360,30,'m',{r:'a'})]}];
+{n:'Детали',b:()=>[T('ДЕТАЛИ',80,290,24,'m',{r:'a',sp:5}),T('Когда и где',80,400,120,'c'),T('6 ноября, пятница',80,700,84,'c'),T('16:15',80,830,84,'c'),T('Студия «Сестра Луна»',80,960,72,'c'),T('Современник',80,1070,30,'m'),T('1 000 ₽',80,1200,84,'c',{r:'a'}),T('Количество мест ограничено',80,1360,30,'m',{r:'a'})]},
+{n:'Анонс на неделю',b:()=>[{t:'r',x:80,y:800,w:920,h:620,rad:22,fill:'rgba(246,240,228,0.94)'},T('Анонс',80,440,150,'i'),T('на неделю',80,580,150,'i',{r:'a'}),...[0,1,2,3].flatMap(i=>{const y=878+135*i,R=[['Понедельник','9:30','Зал Юбилейная'],['Среда','9:30','Зал Юбилейная'],['Среда','20:00','Зал Юбилейная'],['Воскресенье','9:30','Онлайн']][i];return [T(R[0],130,y,44,'m',{c1:'#1D1B26'}),T(R[1],130,y,44,'m',{c1:'#1D1B26',w:820,al:'r'}),T(R[2],130,y+46,30,'m',{c1:'#786E62'}),...(i<3?[{t:'r',x:130,y:y+94,w:820,h:2,rad:0,fill:'rgba(29,27,38,0.18)'}]:[])]}),T('Запись: напишите в директ',88,1500,34,'m',{c1:'#F3EAD8'}),T('Зал Юбилейная · Онлайн по воскресеньям',88,1550,28,'m',{c1:'#F3EAD8',a:.8})]}];
 const mw=(l,b)=>b.sp?[...l].reduce((a,c)=>a+cx.measureText(c).width+b.sp,0)-b.sp:cx.measureText(l).width;
 function lines(b){cx.font=FN(b.f,b.z);const o=[];for(const p of b.s.split('\n')){let c='';for(const w of p.split(' ')){const t=c?c+' '+w:w;if(c&&mw(t,b)>b.w){o.push(c);c=w}else c=t}o.push(c)}return o}
 function dText(b,th){
@@ -215,14 +216,15 @@ if(cv.height!==h)cv.height=h;
 const g=cx.createLinearGradient(0,0,W*.25,h);g.addColorStop(0,th.a[0]);g.addColorStop(.75,th.a[1]);cx.fillStyle=g;cx.fillRect(0,0,W,h);
 if(S.img){const{dw,dh}=cover();cx.drawImage(S.img,(W-dw)*S.px,(h-dh)*S.py,dw,dh);cx.fillStyle=`rgba(8,10,24,${S.dim})`;cx.fillRect(0,0,W,h)}
 else if(th.st&&$('#stc').checked){for(let i=0;i<26;i++){const x=(Math.sin(i*91.7)*.5+.5)*W,y=(Math.sin(i*37.3+2)*.5+.5)*h;cx.fillStyle=hexA(i%3?th.fg:th.ac,.6);cx.beginPath();cx.arc(x,y,1.5+i%3,0,7);cx.fill()}}
-for(const b of S.blocks)dText(b,th);
+for(const b of S.blocks)b.t==='r'?dRect(b):dText(b,th);
 if(!exp){
 if(S.fmt==='story'&&$('#safe').checked){cx.fillStyle='rgba(255,60,60,.14)';cx.fillRect(0,0,W,250);cx.fillRect(0,h-340,W,340)}
 if(S.sel&&S.sel.bb){const q=S.sel.bb;cx.setLineDash([10,8]);cx.strokeStyle='#4aa3ff';cx.lineWidth=3;cx.strokeRect(q.x-8,q.y-8,q.w+16,q.h+16);cx.setLineDash([])}}}
+function dRect(b){const r=b.rad||0;cx.globalAlpha=1;cx.fillStyle=b.fill;cx.beginPath();cx.moveTo(b.x+r,b.y);cx.arcTo(b.x+b.w,b.y,b.x+b.w,b.y+b.h,r);cx.arcTo(b.x+b.w,b.y+b.h,b.x,b.y+b.h,r);cx.arcTo(b.x,b.y+b.h,b.x,b.y,r);cx.arcTo(b.x,b.y,b.x+b.w,b.y,r);cx.closePath();cx.fill();b.bb={x:b.x,y:b.y,w:b.w,h:b.h}}
 function load(i){const k=H()/1920;S.blocks=TP[i].b();S.blocks.forEach(b=>b.y*=k);S.sel=null;[...$('#tpl').children].forEach((e,j)=>e.classList.toggle('on',j===i));sync();draw()}
 function sync(){
 const b=S.sel,th=TH[S.th];
-$('#ed').hidden=!b;$('#nohint').hidden=!!b;$('#del').disabled=!b;if(!b)return;
+$('#ed').hidden=!b;$('#nohint').hidden=!!b;$('#del').disabled=!b;if(!b)return;if(b.t==='r'){$('#ed').hidden=true;$('#nohint').hidden=false;$('#nohint').textContent='Карточка: перетащите её или удалите кнопкой «Удалить».';return}
 $('#tx').value=b.s;const pct=Math.round((b.z-16)/2.24);$('#sz').value=pct;$('#szv').textContent=pct+'%';$('#sp').value=b.sp||0;$('#wd').value=b.w;
 $('#c1').value=b.c1||(b.r==='a'?th.ac:th.fg);$('#c2').value=b.c2||th.ac;$('#gr').checked=!!b.g;
 [...$('#fo').children].forEach(e=>e.classList.toggle('on',e.dataset.v===b.f));

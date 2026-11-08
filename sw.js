@@ -1,4 +1,4 @@
-const CACHE = 'konstruktor-v10';
+const CACHE = 'konstruktor-v11';
 const PAGE = './index.html';
 
 self.addEventListener('install', e => {
